@@ -36,9 +36,9 @@ app.layout = html.Div(
             id='sensor-accel-data-table',
             columns=[
                 {"name": ["Time", "", ""], "id": "ts"},
-                {"name": ["Accel", "Degrees", "Roll"], "id": "accel_roll"},
-                {"name": ["Accel", "Degrees", "Pitch"], "id": "accel_pitch"},
-                {"name": ["Accel", "Degrees", "Yaw"], "id": "accel_yaw"},
+                {"name": ["Accel", "Degrees", "Roll"], "id": "roll"},
+                {"name": ["Accel", "Degrees", "Pitch"], "id": "pitch"},
+                {"name": ["Accel", "Degrees", "Yaw"], "id": "yaw"},
                 {"name": ["Accel", "Raw", "X"], "id": "accel_x"},
                 {"name": ["Accel", "Raw", "Y"], "id": "accel_y"},
                 {"name": ["Accel", "Raw", "Z"], "id": "accel_z"},
@@ -56,9 +56,9 @@ app.layout = html.Div(
             id='sensor-gyro-data-table',
             columns=[
                 {"name": ["Time", "", ""], "id": "ts"},
-                {"name": ["Gyro", "Degrees", "Roll"], "id": "gyro_roll"},
-                {"name": ["Gyro", "Degrees", "Pitch"], "id": "gyro_pitch"},
-                {"name": ["Gyro", "Degrees", "Yaw"], "id": "gyro_yaw"},
+                {"name": ["Gyro", "Degrees", "Roll"], "id": "roll"},
+                {"name": ["Gyro", "Degrees", "Pitch"], "id": "pitch"},
+                {"name": ["Gyro", "Degrees", "Yaw"], "id": "yaw"},
                 {"name": ["Gyro", "Raw", "X"], "id": "gyro_x"},
                 {"name": ["Gyro", "Raw", "Y"], "id": "gyro_y"},
                 {"name": ["Gyro", "Raw", "Z"], "id": "gyro_z"},
@@ -73,9 +73,9 @@ app.layout = html.Div(
             id='sensor-orientation-data-table',
             columns=[
                 {"name": "Time", "id": "ts"},
-                {"name": "Roll", "id": "orientation_roll"},
-                {"name": "Pitch", "id": "orientation_pitch"},
-                {"name": "Yaw", "id": "orientation_yaw"},
+                {"name": "Roll", "id": "roll"},
+                {"name": "Pitch", "id": "pitch"},
+                {"name": "Yaw", "id": "yaw"},
             ],
             merge_duplicate_headers=True,
             style_header=table_header_style,
@@ -96,9 +96,9 @@ app.layout = html.Div(
 def update_accel_raw(n):
     accel_data = sensor_data_reader.accel_data_q[-1]
     data_3d = plotly.graph_objs.Scatter3d(
-        x=[point["accel_yaw"] for point in sensor_data_reader.accel_data_q],
-        y=[point["accel_roll"] for point in sensor_data_reader.accel_data_q],
-        z=[point["accel_pitch"] for point in sensor_data_reader.accel_data_q],
+        x=[point["yaw"] for point in sensor_data_reader.accel_data_q],
+        y=[point["roll"] for point in sensor_data_reader.accel_data_q],
+        z=[point["pitch"] for point in sensor_data_reader.accel_data_q],
         mode='markers+lines',
         marker_size=3
     )

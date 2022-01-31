@@ -23,7 +23,7 @@ ACCEL = 'accel'
 ACCEL_RAW = 'accel_raw'
 GYRO = 'gyro'
 GYRO_RAW = 'gyro_raw'
-ORIENTATION = 'gyro_raw'
+ORIENTATION = 'orientation'
 
 list_of_sensors = {SENSOR_BASIC, ACCEL, ACCEL_RAW, GYRO, GYRO_RAW, ORIENTATION}
 
@@ -127,53 +127,7 @@ def log_sensor_readings(humidity, temp, temp_from_pressure, pressure, north, com
     print("Accelerometer Raw (Gs):" + json.dumps(accel_raw))
 
 
-def read_sensor_data(sense):
-    humidity = sense.get_humidity()
-    temp = sense.get_temperature()
-    temp_from_pressure = sense.get_temperature_from_pressure()
-    pressure = sense.get_pressure()
-    north = sense.get_compass()
-    compass_raw = sense.get_compass_raw()
-    orientation_deg = sense.get_orientation_degrees()
-    gyro = sense.gyroscope
-    gyro_raw = sense.gyroscope_raw
-    accel = sense.accel
-    accel_raw = sense.accel_raw
-    return [humidity, temp, temp_from_pressure, pressure, north, compass_raw, orientation_deg, gyro, gyro_raw, accel,
-            accel_raw]
 
-
-def format_and_publish_data(mqtt_client, humidity, temp, temp_from_pressure, pressure, north, compass_raw,
-                            orientation_deg,
-                            gyro, gyro_raw, accel, accel_raw):
-    now = dt.now().timestamp()
-    sensor_data = {
-        "ts": now,
-        "humidity": humidity,
-        "temperature_c": temp,
-        "temperature_from_pressure": temp_from_pressure,
-        "pressure_millibars": pressure,
-        "compass_north": north
-    }
-
-    accel_data = {
-        "ts": now,
-        "accel": accel,
-        "accel_raw": accel_raw
-    }
-    gyro_data = {
-        "ts": now,
-        "gyro": gyro,
-        "gyro_raw": gyro_raw
-    }
-    orientation_data = {
-        "ts": now,
-        "orientation_degrees": orientation_deg
-    }
-    publish_data(SENSOR_TOPIC, sensor_data)
-    publish_data(ACC_TOPIC, accel_data)
-    publish_data(GYRO_TOPIC, gyro_data)
-    publish_data(ORIENTATION_TOPIC, orientation_data)
 
 
 if __name__ == '__main__':

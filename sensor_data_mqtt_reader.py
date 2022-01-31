@@ -1,3 +1,4 @@
+import traceback
 from collections import deque
 from datetime import datetime as dt
 
@@ -6,13 +7,14 @@ import paho.mqtt.client as mqtt
 
 DEFAULT_MQTT_SERVER = "pi-fw.local"
 DEFAULT_QUEUE_LEN = 10
+DEFAULT_TOPIC = "sense_hat/#"
 
 
 class SensorDataReader:
 
     def __init__(self, mq_server=DEFAULT_MQTT_SERVER, queue_len=DEFAULT_QUEUE_LEN,
                  timestamp_format="%d/%m/%Y, %H:%M:%S.%f",
-                 no_of_deimals=3):
+                 no_of_deimals=3,topic=DEFAULT_TOPIC):
         self.mq_server = mq_server
         self.queue_len = queue_len
         self.no_of_decimals = no_of_deimals
@@ -21,6 +23,7 @@ class SensorDataReader:
         self.accel_data_q = deque(maxlen=queue_len)
         self.gyro_data_q = deque(maxlen=queue_len)
         self.ori_data_q = deque(maxlen=queue_len)
+        self.topic = topic
         self.topic_to_f_mapping = {
             "sense_hat/data/basic": self.store_simple_data,
             "sense_hat/data/accel": self.store_accel_data,
@@ -49,26 +52,26 @@ class SensorDataReader:
     def store_accel_data(self, data):
         accel_data_dict = json.loads(data)
         accel_data = {"ts": self.format_timestamp(accel_data_dict["ts"]),
-                      "accel_roll": accel_data_dict["roll"], 
-                      "accel_yaw": accel_data_dict["yaw"],
-                      "accel_pitch": accel_data_dict["pitch"], 
+                      "roll": accel_data_dict["roll"],
+                      "yaw": accel_data_dict["yaw"],
+                      "pitch": accel_data_dict["pitch"],
 }
         self.accel_data_q.append(self.round_data_points(accel_data))
 
     def store_orientation_data(self, data):
         orientation_data_dict = json.loads(data)
         orientation_data = {"ts": self.format_timestamp(orientation_data_dict["ts"]),
-                            "orientation_roll": orientation_data_dict["roll"],
-                            "orientation_yaw": orientation_data_dict["yaw"],
-                            "orientation_pitch": orientation_data_dict["pitch"]}
+                            "roll": orientation_data_dict["roll"],
+                            "yaw": orientation_data_dict["yaw"],
+                            "pitch": orientation_data_dict["pitch"]}
         self.ori_data_q.append(self.round_data_points(orientation_data))
 
     def store_gyro_data(self, data):
         gyro_data_dict = json.loads(data)
         gyro_data = {"ts": self.format_timestamp(gyro_data_dict["ts"]), 
-                     "gyro_roll": gyro_data_dict["roll"],
-                     "gyro_yaw": gyro_data_dict["yaw"], 
-                     "gyro_pitch": gyro_data_dict["pitch"],
+                     "roll": gyro_data_dict["roll"],
+                     "yaw": gyro_data_dict["yaw"],
+                     "pitch": gyro_data_dict["pitch"],
                      }
         self.gyro_data_q.append(self.round_data_points(gyro_data))
 
@@ -83,7 +86,8 @@ class SensorDataReader:
     def init_and_start_mqtt(self):
         def on_connect(client, userdata, flags, rc):
             print("Connected...")
-            client.subscribe("sense_hat/#")
+            print("Subcribing to " + self.topic)
+            client.subscribe(self.topic)
 
         def on_disconnect(client, userdata, rc):
             print("Disconnected...")

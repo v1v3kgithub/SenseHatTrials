@@ -27,7 +27,7 @@ app.layout = html.Div(
         dcc.Graph(id='live-gyro-graph', animate=False),
         dcc.Interval(
             id='interval-component',
-            interval=1 * 500,  # in milliseconds
+            interval=1 * 1000,  # in milliseconds
             n_intervals=0
         )
     ])
@@ -41,26 +41,26 @@ app.layout = html.Div(
 )
 def update_gyro_graphs(n):
     yaw = go.Scatter(
-        y=[point["gyro_yaw"] for point in sensor_data_reader.gyro_data_q],
+        y=[point["yaw"] for point in sensor_data_reader.gyro_data_q],
         x=[point["ts"] for point in sensor_data_reader.gyro_data_q],
         name='Scatter',
         mode='lines+markers'
     )
     figure = go.Figure(layout={'uirevision': 'button'})
     figure.add_trace(go.Scatter(
-        y=[point["gyro_yaw"] for point in sensor_data_reader.gyro_data_q],
+        y=[point["yaw"] for point in sensor_data_reader.gyro_data_q],
         x=[point["ts"] for point in sensor_data_reader.gyro_data_q],
         name='Yaw',
         mode='lines+markers'
     ))
     figure.add_trace(go.Scatter(
-        y=[point["gyro_roll"] for point in sensor_data_reader.gyro_data_q],
+        y=[point["roll"] for point in sensor_data_reader.gyro_data_q],
         x=[point["ts"] for point in sensor_data_reader.gyro_data_q],
         name='Roll',
         mode='lines+markers'
     ))
     figure.add_trace(go.Scatter(
-        y=[point["gyro_pitch"] for point in sensor_data_reader.gyro_data_q],
+        y=[point["pitch"] for point in sensor_data_reader.gyro_data_q],
         x=[point["ts"] for point in sensor_data_reader.gyro_data_q],
         name='Pitch',
         mode='lines+markers'
@@ -77,10 +77,10 @@ def update_gyro_graphs(n):
               Input('interval-component', 'n_intervals'))
 def update_sensor_simple_data(n):
     roll = go.Scatterpolar(
-        r=[point["gyro_pitch"] for point in sensor_data_reader.gyro_data_q],
-        theta=[point["gyro_roll"] for point in sensor_data_reader.gyro_data_q],
+        r=[point["pitch"] for point in sensor_data_reader.gyro_data_q],
+        theta=[point["roll"] for point in sensor_data_reader.gyro_data_q],
         mode='markers',
-        marker = dict(size=[point["gyro_yaw"]  for point in sensor_data_reader.gyro_data_q],)
+        #marker = dict(size=[point["yaw"] for point in sensor_data_reader.gyro_data_q],)
     )
     figure = go.Figure(data=roll, layout={'uirevision': 'button'})
     figure.update_layout(
@@ -88,14 +88,14 @@ def update_sensor_simple_data(n):
         polar=dict(
             radialaxis=dict(range=[0, 370]),
         ),
-        width=500, height = 500
+        width=500, height=500
     )
     latest_data = sensor_data_reader.gyro_data_q[-1]
     style = {'padding': '5px', 'fontSize': '14px'}
     return [figure,
             [
                 html.Span("Pitch : {:.2f} Yaw : {:.2f} Roll {:.3f}".format(
-                    latest_data["gyro_pitch"], latest_data["gyro_yaw"], latest_data["gyro_roll"]),
+                    latest_data["pitch"], latest_data["yaw"], latest_data["roll"]),
                           style=style),
             ]
             ]
