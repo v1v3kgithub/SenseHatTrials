@@ -8,13 +8,13 @@ import paho.mqtt.client as mqtt
 DEFAULT_MQTT_SERVER = "pi-fw.local"
 DEFAULT_QUEUE_LEN = 10
 DEFAULT_TOPIC = "sense_hat/#"
-
+DEAFULT_NO_OF_DECIMALS = 3
 
 class SensorDataReader:
 
     def __init__(self, mq_server=DEFAULT_MQTT_SERVER, queue_len=DEFAULT_QUEUE_LEN,
                  timestamp_format="%d/%m/%Y, %H:%M:%S.%f",
-                 no_of_deimals=3,topic=DEFAULT_TOPIC):
+                 no_of_deimals=DEAFULT_NO_OF_DECIMALS,topic=DEFAULT_TOPIC):
         self.mq_server = mq_server
         self.queue_len = queue_len
         self.no_of_decimals = no_of_deimals
